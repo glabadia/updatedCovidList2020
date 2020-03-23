@@ -3,11 +3,11 @@ import axios from "axios";
 
 const url = "https://covid19.mathdro.id/api/countries/";
 
-const CountryList = () => {
+const CountryList = ({ onCountryChange, selectedCountry }) => {
   const [results, setResults] = useState();
   const [countryCode, setCountryCode] = useState();
   const [isoCode, setIsoCode] = useState();
-  const [selectedCountry, setSelectedCountry] = useState();
+  // const [selectedCountry, setSelectedCountry] = useState();
 
   useEffect(() => {
     async function getData() {
@@ -65,8 +65,8 @@ const CountryList = () => {
   return (
     <select
       onChange={e => {
-        setSelectedCountry(e.target.value);
-        console.log(selectedCountry);
+        console.log(e.target.value);
+        onCountryChange(e.target.value);
       }}
     >
       {results.map((result, idx) => (

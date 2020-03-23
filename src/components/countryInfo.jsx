@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
+import CountryInfoStats from "../utils/countryInfoStats";
 import axios from "axios";
 
-const urlOneCountry = "https://covid19.mathdro.id/api/countries/PH";
+const urlOneCountry = country =>
+  `https://covid19.mathdro.id/api/countries/${country}`;
 const urlWorld = "https://covid19.mathdro.id/api/";
 const [confirmed, recovered, deaths, lastUpdate] = [
   "confirmed",
@@ -10,35 +12,42 @@ const [confirmed, recovered, deaths, lastUpdate] = [
   "lastUpdate"
 ];
 
-const CountryInfo = () => {
-  const [result, setResult] = useState();
-  useEffect(() => {
-    async function getData() {
-      const response = await axios(urlOneCountry);
-      setResult(response.data);
-    }
-    getData();
-  }, []);
+const CountryInfo = ({ onCountryChange, selectedCountry }) => {
+  // const [result, setResult] = useState();
+  const { data, status, loading } = CountryInfoStats(
+    !selectedCountry ? urlWorld : urlOneCountry(selectedCountry)
+  );
 
-  if (!result) return <p>Loading...</p>;
+  // useEffect(() => {
+  //   setResult();
+  //   async function getData() {
+  //     const response = await axios(
+  //       !selectedCountry ? urlWorld : urlOneCountry(selectedCountry)
+  //     );
+  //     setResult(response.data);
+  //   }
+  //   getData();
+  // }, [selectedCountry]);
 
-  // return <pre>{JSON.stringify(result, null, 2)}</pre>;
+  if (loading) return <p>Loading...</p>;
+  if (status !== 200) return <p>{data}</p>;
+
   return (
     <div>
       <div>
         <h3>Confirmed</h3>
-        <span>{result[confirmed].value}</span>
+        <span>{data[confirmed].value}</span>
       </div>
       <div>
         <h3>Deaths</h3>
-        <span>{result[deaths].value}</span>
+        <span>{data[deaths].value}</span>
       </div>
       <div>
         <h3>Recovered</h3>
-        <span>{result[recovered].value}</span>
+        <span>{data[recovered].value}</span>
       </div>
       <p>Last Update:</p>
-      <span>{result[lastUpdate]}</span>
+      <span>{data[lastUpdate]}</span>
     </div>
   );
 };
